@@ -1,0 +1,17 @@
+//
+// Protocol buffers definition for the PAS
+//
+syntax = "proto3";
+package pt.ulisboa.tecnico.meic.sec.pas.grpc;
+
+message HelloRequest {
+}
+
+message HelloResponse {
+	string board = 1;
+}
+
+service PasService {
+  rpc currentBoard(HelloRequest) returns (HelloResponse);
+  // add extra functions here
+}
