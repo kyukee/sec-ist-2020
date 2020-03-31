@@ -1,5 +1,9 @@
 package pt.ulisboa.tecnico.meic.sirs;
 
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public final class DataUtils {
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
@@ -12,4 +16,48 @@ public final class DataUtils {
         }
         return new String(hexChars);
     }
+
+    public static byte[] objToBytes(Object obj) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = null;
+        byte[] bytes = null;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(obj);
+            out.flush();
+            bytes = bos.toByteArray();
+        } finally {
+            bos.close();
+        }
+        return bytes;
+    }
+
+    public static Object bytesToObj(byte[] bytes) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        ObjectInput in = null;
+        Object obj = null;
+        try {
+            in = new ObjectInputStream(bis);
+            obj = in.readObject();
+        } finally {
+
+            if (in != null) {
+                in.close();
+            }
+        }
+        return obj;
+    }
+    
+    public static byte[] digest(byte[] bytes) {
+    	MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		md.update(bytes);
+		byte[] digest = md.digest();
+		return digest;
+    }
+    
 }

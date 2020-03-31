@@ -1,17 +1,35 @@
 //
-// Protocol buffers definition for the PAS
+// Protocol buffers definition for the Public Announcement Service
 //
 syntax = "proto3";
 package pt.ulisboa.tecnico.meic.sec.pas.grpc;
 
-message HelloRequest {
+// ********** register() **********
+
+message RegisterRequest {
+  // encrypted message: create a RegisterMessage > convert to byte[] > encrypt with AES key
+  // encrypted AES key: encrypt with client private RSA key > server public RSA key
+
+  bytes encryptedMessage = 1;
+  bytes encryptedAESKey = 2;
 }
 
-message HelloResponse {
-	string board = 1;
+message RegisterResponse {
+	int32 status = 1;
+}
+
+message RegisterMessage {
+  message Data {
+    bytes publicKeyBytes = 1;
+    string name = 2;
+    string password = 3;
+  }
+  
+  Data data = 1;
+	bytes digest = 2;
 }
 
 service PasService {
-  rpc currentBoard(HelloRequest) returns (HelloResponse);
+  rpc register(RegisterRequest) returns (RegisterResponse);
   // add extra functions here
 }

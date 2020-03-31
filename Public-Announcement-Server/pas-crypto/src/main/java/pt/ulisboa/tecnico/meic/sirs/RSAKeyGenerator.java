@@ -14,6 +14,8 @@ import java.security.PublicKey;
 
 public class RSAKeyGenerator {
 
+    // java -cp ./src pt.ulisboa.tecnico.meic.sirs.RSAKeyGenerator w intro/outputs/priv.key intro/outputs/pub.key
+
     public static void main(String[] args) throws Exception {
 
         // check args
@@ -28,25 +30,28 @@ public class RSAKeyGenerator {
 
         if (mode.toLowerCase().startsWith("w")) {
             System.out.println("Generate and save keys");
-            write(privkeyPath);
-            write(pubkeyPath);
+            write(privkeyPath, pubkeyPath);
         } else {
             System.out.println("Load keys");
-            read(privkeyPath);
-            read(pubkeyPath);            
+
+            Key privKey = read(privkeyPath);
+            System.out.println(DataUtils.bytesToHex(privKey.getEncoded()));
+
+            Key pubKey = read(pubkeyPath);
+            System.out.println(DataUtils.bytesToHex(pubKey.getEncoded()));
         }
 
         System.out.println("Done.");
     }
 
-    public static void write(String keyPath) throws GeneralSecurityException, IOException {
+    public static void write(String keyPathPriv, String keyPathPub) throws GeneralSecurityException, IOException {
         // get an AES private key
         System.out.println("Generating RSA key ..." );
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(1024);
         KeyPair keys = keyGen.generateKeyPair();
         System.out.println("Finish generating RSA keys");
-        
+
         System.out.println("Private Key:");
         PrivateKey privKey = keys.getPrivate();
         byte[] privKeyEncoded = privKey.getEncoded();
@@ -56,12 +61,12 @@ public class RSAKeyGenerator {
         byte[] pubKeyEncoded = pubKey.getEncoded();
         System.out.println(DataUtils.bytesToHex(pubKeyEncoded));
 
-        System.out.println("Writing Private key to '" + keyPath + "' ..." );
-        try (FileOutputStream privFos = new FileOutputStream(keyPath)) {
+        System.out.println("Writing Private key to '" + keyPathPriv + "' ..." );
+        try (FileOutputStream privFos = new FileOutputStream(keyPathPriv)) {
             privFos.write(privKeyEncoded);
         }
-        System.out.println("Writing Pubic key to '" + keyPath + "' ..." );
-        try (FileOutputStream pubFos = new FileOutputStream(keyPath)) {
+        System.out.println("Writing Public key to '" + keyPathPub + "' ..." );
+        try (FileOutputStream pubFos = new FileOutputStream(keyPathPub)) {
             pubFos.write(pubKeyEncoded);
         }
     }
@@ -73,7 +78,6 @@ public class RSAKeyGenerator {
             encoded = new byte[fis.available()];
             fis.read(encoded);
         }
-
         return new SecretKeySpec(encoded, "RSA");
     }
 

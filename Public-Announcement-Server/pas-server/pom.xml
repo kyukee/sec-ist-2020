@@ -16,6 +16,11 @@
   		<artifactId>pas-grpc</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
+  	<dependency>
+  		<groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
+  		<artifactId>pas-crypto</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
   </dependencies>
   <build>
   <plugins>
