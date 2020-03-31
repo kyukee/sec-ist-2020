@@ -16,7 +16,7 @@ public class AES {
     Key key = null;
 
 	try {
-		keyGen = KeyGenerator.getInstance("AES");
+		keyGen = KeyGenerator.getInstance(cipherMode);
 		keyGen.init(128);
 	    key = keyGen.generateKey();
 	} catch (Exception e) {

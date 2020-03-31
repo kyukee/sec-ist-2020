@@ -1,9 +1,5 @@
 package pt.ulisboa.tecnico.meic.sec.pas.server;
 
-import java.net.*;
-import java.io.*;
-import java.util.Date;
-
 import java.io.IOException;
 
 import io.grpc.BindableService;
@@ -13,7 +9,7 @@ import io.grpc.ServerBuilder;
 public class PasServerApp {
 	 public static void main(String[] args) throws IOException, InterruptedException {
 
-        // receive and print arguments
+    // receive and print arguments
 		System.out.printf("Received %d arguments%n", args.length);
 		for (int i = 0; i < args.length; i++) {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
@@ -26,21 +22,21 @@ public class PasServerApp {
 			return;
 		}
 
-        // parse port
-        int port = Integer.parseInt(args[0]);
+    // parse port
+    int port = Integer.parseInt(args[0]);
 
-        BindableService service1 = new PasServiceImpl();
+    BindableService service1 = new PasServiceImpl();
 
-        // bind this server to a port and any grpc services you want
-        Server server = ServerBuilder
-          .forPort(port)
-          .addService(service1)
-          .build();
+    // bind this server to a port and to any grpc services you want
+    Server server = ServerBuilder
+      .forPort(port)
+      .addService(service1)
+      .build();
 
-        // start server
-        server.start();
-        System.out.println("Server started");
-        server.awaitTermination();
-    }
+    // start server
+    server.start();
+    System.out.println("Server started on port " + port);
+    server.awaitTermination();
+  }
 }
 

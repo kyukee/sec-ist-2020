@@ -4,6 +4,16 @@
 syntax = "proto3";
 package pt.ulisboa.tecnico.meic.sec.pas.grpc;
 
+// ********** ping() **********
+
+message PingRequest {
+  string message = 1;
+}
+
+message PingReply {
+  string message = 1;
+}
+
 // ********** register() **********
 
 message RegisterRequest {
@@ -12,6 +22,7 @@ message RegisterRequest {
 
   bytes encryptedMessage = 1;
   bytes encryptedAESKey = 2;
+  bytes publicKeyBytes = 3;
 }
 
 message RegisterResponse {
@@ -20,16 +31,15 @@ message RegisterResponse {
 
 message RegisterMessage {
   message Data {
-    bytes publicKeyBytes = 1;
-    string name = 2;
-    string password = 3;
+    string name = 1;
+    string password = 2;
   }
-  
+
   Data data = 1;
 	bytes digest = 2;
 }
 
 service PasService {
+  rpc ping(PingRequest) returns (PingReply);
   rpc register(RegisterRequest) returns (RegisterResponse);
-  // add extra functions here
 }

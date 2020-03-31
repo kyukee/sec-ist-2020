@@ -17,34 +17,53 @@ public final class DataUtils {
         return new String(hexChars);
     }
 
-    public static byte[] objToBytes(Object obj) throws IOException {
+    public static byte[] objToBytes(Object obj) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = null;
         byte[] bytes = null;
+        
         try {
             out = new ObjectOutputStream(bos);
             out.writeObject(obj);
             out.flush();
             bytes = bos.toByteArray();
+        } catch (Exception e) {
+			e.printStackTrace();
         } finally {
-            bos.close();
+        	
+            try {
+				bos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            
         }
+        
         return bytes;
     }
 
-    public static Object bytesToObj(byte[] bytes) throws IOException, ClassNotFoundException {
+    public static Object bytesToObj(byte[] bytes) {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         ObjectInput in = null;
         Object obj = null;
+        
         try {
             in = new ObjectInputStream(bis);
             obj = in.readObject();
-        } finally {
+        } catch (Exception e) {
+			e.printStackTrace();
+		} finally {
 
-            if (in != null) {
-                in.close();
-            }
+			try {
+				if (in != null) {
+	                in.close();
+	            }
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            
         }
+        
         return obj;
     }
     
