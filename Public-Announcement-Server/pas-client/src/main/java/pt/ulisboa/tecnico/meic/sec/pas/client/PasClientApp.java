@@ -21,7 +21,6 @@ public class PasClientApp {
 
 	PasServiceGrpc.PasServiceBlockingStub clientStub;
 
-
 	public static ManagedChannel createChannel(String host, int port) {
 		// gRPC provides a channel construct which abstracts out the underlying details like connection, connection pooling, load balancing, etc.
 		ManagedChannel clientChannel = ManagedChannelBuilder.forAddress(host, port)
@@ -41,15 +40,15 @@ public class PasClientApp {
 		clientStub = PasServiceGrpc.newBlockingStub(channel);
 	}
 
-  // ping() returns the same string that was sent to the server
-  public String ping(String text) {
+	// ping() returns the same string that was sent to the server
+	public String ping(String text) {
 
-    PingRequest request = PingRequest.newBuilder()
-      .setMessage(text)
-      .build();
+	  	PingRequest request = PingRequest.newBuilder()
+		  .setMessage(text)
+		  .build();
 
-    PingReply response = clientStub.ping(request);
-    return response.getMessage();
+		PingReply response = clientStub.ping(request);
+		return response.getMessage();
   }
 
 	public int register(Key privKey, Key pubKey, Key serverPubKey, String name, String password) throws Exception {

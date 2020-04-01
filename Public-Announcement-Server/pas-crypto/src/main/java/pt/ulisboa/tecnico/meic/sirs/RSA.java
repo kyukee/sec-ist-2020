@@ -1,10 +1,11 @@
 package pt.ulisboa.tecnico.meic.sirs;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -29,13 +30,73 @@ public class RSA {
         return keys;
     }
 
-    // we use the public key as the identifier of the private key on the keystore
-    public static void savePrivKeyToKeystore(PrivateKey privKey, PublicKey pubKey) {
-        // TODO
-    }
+//    public static void savePrivKeyToKeystore(String alias, String keyPass, PrivateKey privKey, PublicKey pubKey, String storePass) throws Exception{
+//        
+//    	// load keystore	    
+//	    KeyStore keyStore = KeyStore.getInstance("JCEKS");
+//	    try(InputStream ins = RSA.class.getResourceAsStream("/keystore.jks")){
+//	    	keyStore.load(ins, storePass.toCharArray());
+//	    }
+//    	
+//
+//    	// set entry in the keystore
+//	    KeyPair keys = new KeyPair(pubKey, privKey);
+//    	
+//	    // TODO the only missing thing is the certificate
+//    	Certificate certChain = null;
+//	    
+//    	keyStore.setKeyEntry("alias", privKey, keyPass.toCharArray(), certChain);
+//    
+//        
+//	    // get keystore path
+//    	URL resource = RSA.class.getResource("/keystore.jks");
+//		File file = Paths.get(resource.toURI()).toFile();
+//		String keystorePath = file.getAbsolutePath();
+//		
+//		// save keystore
+//		try (FileOutputStream keyStoreOutputStream = new FileOutputStream(keystorePath)) {
+//			keyStore.store(keyStoreOutputStream, storePass.toCharArray());
+//		}
+//				
+//    }
 
-    public static void loadPrivKeyFromKeystore() {
-        // TODO
+    public static KeyPair getKeyPairFromKeyStore(String alias, String keyPass, String storePass) {
+    	
+    	// load keystore	    
+	    KeyStore keyStore = null;
+
+	    // TODO keystore needs to be an argument / maybe convert to file opener instead of resource?
+	    try(InputStream ins = RSA.class.getResourceAsStream("/keystore.jks")){
+	    	keyStore = KeyStore.getInstance("JCEKS");
+	    	keyStore.load(ins, storePass.toCharArray());
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+
+	    // get private key
+	    KeyStore.PasswordProtection keyPassword = new KeyStore.PasswordProtection(keyPass.toCharArray());
+	    KeyStore.PrivateKeyEntry privateKeyEntry = null;
+	    PrivateKey privateKey = null;
+	    
+		try {
+			privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, keyPassword);
+			privateKey = privateKeyEntry.getPrivateKey();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    
+	    // get public key
+	    java.security.cert.Certificate cert = null;
+	    PublicKey publicKey = null;
+	    
+		try {
+			cert = keyStore.getCertificate(alias);
+			publicKey = cert.getPublicKey();
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		}
+	    
+	    return new KeyPair(publicKey, privateKey);
     }
 
     public static byte[] encrypt(Key key, byte[] data) {
