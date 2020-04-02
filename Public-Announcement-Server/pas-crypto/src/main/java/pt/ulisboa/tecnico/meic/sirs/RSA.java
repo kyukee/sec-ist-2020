@@ -44,7 +44,7 @@ public class RSA {
 //    	// set entry in the keystore
 //	    KeyPair keys = new KeyPair(pubKey, privKey);
 //    	
-//	    // TODO the only missing thing is the certificate
+//	    // TODO the only missing thing to make this work is the certificate
 //    	Certificate certChain = null;
 //	    
 //    	keyStore.setKeyEntry("alias", privKey, keyPass.toCharArray(), certChain);

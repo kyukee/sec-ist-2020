@@ -80,7 +80,7 @@ public class PasServiceImpl extends PasServiceImplBase {
         Key clientPubKey = RSA.toKey(publicKeyBytes);
         
         // retrieve the server's private key
-        // TODO cleartext password / what about multiple servers?
+        // TODO cleartext password && what about multiple servers?
         KeyPair keys = getServerKeys();
         Key privKey = keys.getPrivate();
         
@@ -121,5 +121,5 @@ public class PasServiceImpl extends PasServiceImplBase {
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
-    
+
 }
