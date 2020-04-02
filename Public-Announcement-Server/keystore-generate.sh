@@ -10,7 +10,6 @@ keytool -genkeypair -noprompt \
  -alias $2 \
  -keyalg RSA \
  -keysize 2048 \
- -storetype pkcs12 \
  -dname "CN=mqttserver.ibm.com, OU=ID, O=IBM, L=Hursley, S=Hants, C=GB" \
  -storepass "password" \
  -keypass "password"

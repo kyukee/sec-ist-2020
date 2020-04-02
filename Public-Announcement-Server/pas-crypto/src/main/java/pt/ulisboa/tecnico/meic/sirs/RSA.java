@@ -73,7 +73,7 @@ public class RSA {
 				throw new IOException();
 			}
 
-			keyStore = KeyStore.getInstance("PKCS12");
+			keyStore = KeyStore.getInstance("JKS", "SUN");
 			keyStore.load(ins, storePass.toCharArray());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,7 +86,7 @@ public class RSA {
 		
 		
 		try {
-			privateKey = (PrivateKey) keyStore.getKey(alias, null);
+			privateKey = (PrivateKey) keyStore.getKey(alias, keyPassword);
 			
 
 

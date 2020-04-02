@@ -6,6 +6,8 @@ import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
+import pt.ulisboa.tecnico.meic.sec.pas.server.domain.Database;
+
 public class PasServerApp {
 	 public static void main(String[] args) throws IOException, InterruptedException {
 

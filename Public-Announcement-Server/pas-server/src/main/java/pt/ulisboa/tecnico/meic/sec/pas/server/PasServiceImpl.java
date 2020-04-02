@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.meic.sec.pas.grpc.Protocol.PingRequest;
 import pt.ulisboa.tecnico.meic.sec.pas.grpc.Protocol.RegisterMessage;
 import pt.ulisboa.tecnico.meic.sec.pas.grpc.Protocol.RegisterRequest;
 import pt.ulisboa.tecnico.meic.sec.pas.grpc.Protocol.RegisterResponse;
+import pt.ulisboa.tecnico.meic.sec.pas.server.domain.Database;
 import pt.ulisboa.tecnico.meic.sirs.AES;
 import pt.ulisboa.tecnico.meic.sirs.DataUtils;
 import pt.ulisboa.tecnico.meic.sirs.RSA;
@@ -120,4 +121,5 @@ public class PasServiceImpl extends PasServiceImplBase {
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
+    
 }
