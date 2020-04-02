@@ -57,10 +57,11 @@ public class PasClientApp {
 		RegisterMessage.Builder builder = RegisterMessage.newBuilder();
 
 		// fill the data field of RegisterMessage
-		byte[] encoded = pubKey.getEncoded();
+		long epoch = System.currentTimeMillis()/1000;
 		RegisterMessage.Data data = RegisterMessage.Data.newBuilder()
 			.setName(name)
 			.setPassword(password)
+			.setEpoch(epoch)
 			.build();
 
 		// create a digest of the data and insert into RegisterMessage
@@ -83,7 +84,8 @@ public class PasClientApp {
 		byte[] aesKeyBytes_rsaPass1 = RSA.encrypt(privKey, aesKeyBytes);
 		byte[] aesKeyBytes_rsaPass2 = RSA.encrypt(serverPubKey, aesKeyBytes_rsaPass1);
 
-		// the final message contains the encrypted RegisterMessage and encrypted AES key
+		// the final message contains the encrypted RegisterMessage, encrypted AES key and user public key
+		byte[] encoded = pubKey.getEncoded();
 		RegisterRequest registerRequest = RegisterRequest.newBuilder()
 			.setEncryptedMessage(ByteString.copyFrom(encryptedMessageBytes))
 			.setEncryptedAESKey(ByteString.copyFrom(aesKeyBytes_rsaPass2))

@@ -1,14 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
     <artifactId>Public-Announcement-Server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
+
+  <groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
   <artifactId>pas-client</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
   <properties>
   	<mainclass>pt.ulisboa.tecnico.meic.sec.pas.client.PasClientApp</mainclass>
   </properties>
+
   <dependencies>
   	<dependency>
   		<groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
@@ -26,12 +32,13 @@
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
   	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>4.12</version>
-		<scope>test</scope>
-	</dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -43,4 +50,5 @@
       </plugins>
     </pluginManagement>
   </build>
+  
 </project>

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CLIENTS_KEYSTORE="pas-client/src/main/resources/keystore.jks"
-SERVERS_KEYSTORE="pas-server/src/main/resources/keystore.jks"
+CLIENTS_KEYSTORE="pas-client/src/test/resources/client-keystore.jks"
+SERVERS_KEYSTORE="pas-server/src/test/resources/server-keystore.jks"
 
 if [ "$#" -ne 1 ]; then
     echo "necessary arguments: keystore_path"

@@ -9,7 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class AES {
 
   // We use ECB because a key is never used to encrypt more then one time
-  public final static String cipherMode = "AES/ECB/PKCS5Padding";
+  public final static String cipherMode = "AES";
 
   public static Key generateKey() {
     KeyGenerator keyGen;
@@ -18,7 +18,7 @@ public class AES {
 	try {
 		keyGen = KeyGenerator.getInstance(cipherMode);
 		keyGen.init(128);
-	    key = keyGen.generateKey();
+    key = keyGen.generateKey();
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
@@ -33,7 +33,7 @@ public class AES {
 	try {
 		cipher = Cipher.getInstance(cipherMode);
 		cipher.init(Cipher.ENCRYPT_MODE, key);
-	    cipherText = cipher.doFinal(data);
+    cipherText = cipher.doFinal(data);
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
@@ -47,8 +47,8 @@ public class AES {
 
 	try {
 		cipher = Cipher.getInstance(cipherMode);
-	    cipher.init(Cipher.DECRYPT_MODE, key);
-	    original = cipher.doFinal(cipherText);
+    cipher.init(Cipher.DECRYPT_MODE, key);
+    original = cipher.doFinal(cipherText);
 	} catch (Exception e) {
 		e.printStackTrace();
 	}

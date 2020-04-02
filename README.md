@@ -2,28 +2,30 @@
 
 Highly Dependable Systems 2019-2020, 2nd semester project
 
+## Installing
 
+- compile and install all modules:
 
-### Installing
+        cd Public-Announcement-Server
 
-- To compile and install all modules:
+        mvn clean install -DskipTests
 
-cd to Public-Announcement-Server
+- generate the keystores and rsa keys
 
-mvn clean install -DskipTests
+        ./keystore-setup.sh
 
-
-### Running tests
+## Running tests
 
 - how to run servers
 
-cd to pas-server
+        cd pas-server
 
-one terminal per server: mvn compile exec:java -Dserver.port=xxxx (ex: 9010)
-
+        (one terminal per server)
+        mvn compile exec:java -Dserver.port=xxxx (ex: 9010)
 
 - how to run tests
 
-cd to pas-client
+        cd pas-client
 
-in one terminal only: mvn verify
+        (in one terminal only)
+        mvn verify

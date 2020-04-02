@@ -25,7 +25,9 @@ public class PasServerApp {
     // parse port
     int port = Integer.parseInt(args[0]);
 
-    BindableService service1 = new PasServiceImpl();
+
+    Database database = new Database();
+    BindableService service1 = new PasServiceImpl(database);
 
     // bind this server to a port and to any grpc services you want
     Server server = ServerBuilder

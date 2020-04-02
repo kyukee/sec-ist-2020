@@ -43,10 +43,10 @@ public class RegisterTest extends BaseTest {
 	@Test
 	public void correctArgumentsCorrectResult() throws Exception {
 
-		KeyPair keys = RSA.getKeyPairFromKeyStore("client1", "password", "password");
+		KeyPair keys = RSA.getKeyPairFromKeyStore("client1", "/client-keystore.jks", "password", "password");
         Key privKey = keys.getPrivate();
         Key pubKey = keys.getPublic();
-        Key serverPubKey = RSA.getKeyPairFromKeyStore("server1", "password", "password").getPublic();
+        Key serverPubKey = RSA.getKeyPairFromKeyStore("server1", "/server-keystore.jks", "password", "password").getPublic();
         String name = "John";
         String serverPassword = "password";
 

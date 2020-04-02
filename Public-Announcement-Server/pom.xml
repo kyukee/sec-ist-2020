@@ -1,19 +1,49 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
   <artifactId>Public-Announcement-Server</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+
   <packaging>pom</packaging>
+
+  <properties>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
   <modules>
   	<module>pas-client</module>
   	<module>pas-server</module>
   	<module>pas-crypto</module>
   	<module>pas-grpc</module>
   </modules>
-  <properties>
-  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	<maven.compiler.source>1.8</maven.compiler.source>
-	<maven.compiler.target>1.8</maven.compiler.target>
-  </properties>
+
+  <!-- <dependencyManagement>
+    <dependencies>
+        <dependency>
+          <groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
+          <artifactId>pas-client</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
+          <artifactId>pas-server</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
+          <artifactId>pas-crypto</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+          <groupId>pt.ulisboa.tecnico.meic.sec.pas</groupId>
+          <artifactId>pas-grpc</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+  </dependencyManagement> -->
+
 </project>

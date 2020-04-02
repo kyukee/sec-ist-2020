@@ -33,6 +33,7 @@ message RegisterMessage {
   message Data {
     string name = 1;
     string password = 2;
+    int64 epoch = 3;
   }
 
   Data data = 1;

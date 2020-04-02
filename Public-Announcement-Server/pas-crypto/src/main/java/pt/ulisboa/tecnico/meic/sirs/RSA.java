@@ -8,12 +8,14 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.KeyStore.PrivateKeyEntry;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 public class RSA {
-    public final static String cipherMode = "RSA/ECB/PKCS1Padding";
+
+	public final static String cipherMode = "RSA/ECB/PKCS1Padding";
 
     public static KeyPair generateKeyPair() {
         KeyPairGenerator keyGen;
@@ -60,31 +62,56 @@ public class RSA {
 //				
 //    }
 
-    public static KeyPair getKeyPairFromKeyStore(String alias, String keyPass, String storePass) {
+    public static KeyPair getKeyPairFromKeyStore(String alias, String keyPass, String keyPath, String storePass) {
     	
     	// load keystore	    
 	    KeyStore keyStore = null;
 
-	    // TODO keystore needs to be an argument / maybe convert to file opener instead of resource?
-	    try(InputStream ins = RSA.class.getResourceAsStream("/keystore.jks")){
-	    	keyStore = KeyStore.getInstance("JCEKS");
-	    	keyStore.load(ins, storePass.toCharArray());
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
+	    try (InputStream ins = RSA.class.getResourceAsStream(keyPass)) {
 
-	    // get private key
-	    KeyStore.PasswordProtection keyPassword = new KeyStore.PasswordProtection(keyPass.toCharArray());
-	    KeyStore.PrivateKeyEntry privateKeyEntry = null;
-	    PrivateKey privateKey = null;
-	    
-		try {
-			privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, keyPassword);
-			privateKey = privateKeyEntry.getPrivateKey();
+			if (ins == null) {
+				throw new IOException();
+			}
+
+			keyStore = KeyStore.getInstance("PKCS12");
+			keyStore.load(ins, storePass.toCharArray());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	    
+
+	    // get private key
+	    char[] keyPassword = keyPass.toCharArray();
+	    PrivateKey privateKey = null;
+		
+		
+		
+		try {
+			privateKey = (PrivateKey) keyStore.getKey(alias, null);
+			
+
+
+
+
+
+		// KeyStore.ProtectionParameter entryPassword = new KeyStore.PasswordProtection(keyPassword);
+		// KeyStore.PrivateKeyEntry privateKeyEntry = null;
+
+		// try {
+			
+		// 	privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias, entryPassword);
+		// 	privateKey = privateKeyEntry.getPrivateKey();
+
+
+
+
+
+
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	    // get public key
 	    java.security.cert.Certificate cert = null;
 	    PublicKey publicKey = null;
