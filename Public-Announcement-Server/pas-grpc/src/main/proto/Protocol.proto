@@ -40,7 +40,7 @@ message RegisterMessage {
 	bytes signature = 2;
 }
 
-// ********** post() **********
+// ********** post() / postGeneral() **********
 
 message PostRequest {
   bytes encryptedMessage = 1;
@@ -79,6 +79,8 @@ message ReadResponse {
 message ReadMessage {
   message Data {
     int32 number = 1;
+    int64 epoch = 2;
+    bytes announcementKeyBytes = 3;
   }
 
   Data data = 1;
@@ -90,6 +92,7 @@ message ReadMessage {
 message ReadGeneralRequest {
   bytes encryptedMessage = 1;
   bytes encryptedAESKey = 2;
+  bytes publicKeyBytes = 3;
 }
 
 message ReadGeneralResponse {
@@ -99,6 +102,7 @@ message ReadGeneralResponse {
 message ReadGeneralMessage {
   message Data {
     int32 number = 1;
+    int64 epoch = 2;
   }
 
   Data data = 1;
@@ -120,6 +124,7 @@ service PasService {
   rpc ping(PingRequest) returns (PingReply);
   rpc register(RegisterRequest) returns (RegisterResponse);
   rpc post(PostRequest) returns (PostResponse);
+  rpc postGeneral(PostRequest) returns (PostResponse);
   rpc read(ReadRequest) returns (ReadResponse);
   rpc readGeneral(ReadGeneralRequest) returns (ReadGeneralResponse);
 }

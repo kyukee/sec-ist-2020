@@ -1,24 +1,18 @@
 package pt.ulisboa.tecnico.meic.sec.pas.server.domain;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Comparator;
 import java.util.List;
 
-import pt.ulisboa.tecnico.meic.sirs.DataUtils;
-
 public class Announcement implements Comparator<Announcement> {
 
-    Long creationTime; // as an epoch
-    List<Long> references;
-    String message;
-    long _id;
-    long _userId;
+    private long creationTime; // as an epoch
+    private List<Long> references;
+    private String message;
+    private long _id;
+    private long _userId;
 
-    // cut string to 256 characters
-    // String cutString = StringUtils.left(string, 256);
-
-    public Announcement(Long user, long creationTime, List<Long> references, String message) {
-        this._userId = user;
+    public Announcement(long userKeyHash, long creationTime, List<Long> references, String message) {
+        this._userId = userKeyHash;
         this.creationTime = creationTime;
         this.references = references;
         this.message = message;
@@ -27,7 +21,7 @@ public class Announcement implements Comparator<Announcement> {
         this._id = msg ^ creationTime;
     }
 
-    public Long getUser() {
+    public long getUser() {
         return this._userId;
     }
 

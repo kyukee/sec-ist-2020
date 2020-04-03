@@ -1,36 +1,74 @@
 package pt.ulisboa.tecnico.meic.sec.pas.server.domain;
 
 import java.security.Key;
-import java.util.ArrayList;
+import java.security.PublicKey;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Database {
 
     AnnouncementBoard generalBoard;
-    List<User> users = new ArrayList<User>();
-
-    private boolean containsKey(final List<User> list, final Long keyHash) {
-        return list.stream().filter(o -> o.getId().equals(keyHash)).findFirst().isPresent();
-    }
+    Map<Long,User> users = new ConcurrentHashMap<Long,User>();
 
     public int register(Key publicKey, String name, String password){
 
         // check if the received fields are valid
         long pubKeyHash = publicKey.hashCode();
-        if (containsKey(users, pubKeyHash)) {
+        if (users.containsKey(pubKeyHash)) {
             return 400;
         }
 
         User newUser = new User(publicKey, name, password);
-        users.add(newUser);
+        users.put(pubKeyHash, newUser);
 
         return 200;
     }
 
 
+    public int post(Key publicKey, String message, List<Long> references, long receivedEpoch, String password) {
+        
+        // check user exists
+        long pubKeyHash = publicKey.hashCode();
+        if (! users.containsKey(pubKeyHash)) {
+            return 400;
+        }
 
-    // public void post(Key publicKey, String message, List<Announcement> references, long creationTime, String password, byte[] signature, byte[] encryptedAESkey)
+        // check password is correct
+        User user = users.get(pubKeyHash);
+        long passHash = password.hashCode();
+        if (user.getPasswordHash().equals(passHash)){
+            return 400;
+        }
 
+        Announcement announcement = new Announcement(pubKeyHash, receivedEpoch, references, message);
+        user.getPersonalBoard().addAnnouncement(announcement);
 
+        return 200;
+    }
+
+    public List<Announcement> read(PublicKey announcementKey, int number) {
+
+        // check user exists
+        long pubKeyHash = announcementKey.hashCode();
+        if (!users.containsKey(pubKeyHash)) {
+            return null;
+        }
+
+        User user = users.get(pubKeyHash);
+        List<Announcement> list = (List<Announcement>) user.getPersonalBoard().getAnnouncements().values();
+
+        List<Announcement> sortedList = list.stream()
+            .sorted(Comparator.comparing(Announcement::getCreationTime)).
+            collect(Collectors.toList());
+
+        if ((number == 0) || (number >= list.size())) {
+            return sortedList;
+        }
+
+        return sortedList.stream().limit(number).collect(Collectors.toList());
+    }
 
 }

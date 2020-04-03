@@ -22,47 +22,27 @@ import pt.ulisboa.tecnico.meic.sirs.RSA;
 public class RegisterTest extends BaseTest {
 
     private PasClientApp client1;
-	private ManagedChannel channel1;
+	private PasClientApp client2;
+	private PasClientApp client3;
 
 	@Before
 	public void setup() throws UnknownHostException, IOException {
-        String server;
 
-        // connect client1 to server1
-        client1 = new PasClientApp();
-        server = "server1";
-	    channel1 = PasClientApp.createChannel(hosts.get(server), ports.get(server));
-	    client1.startConnection(channel1);
+        client1 = createClient("client1", "server1");		
+		client2 = createClient("client2", "server1");
+		client3 = createClient("client3", "server1");
 
-	}
-
-	@After
-	public void tearDown() throws IOException {
-		channel1.shutdown();
 	}
 
 	@Test
 	public void correctArgumentsCorrectResult() throws Exception {
 
-		KeyPair keys1 = RSA.getKeyPairFromKeyStore("client1", "password", "/client-keystore.jks", "password");
-        Key privKey1 = keys1.getPrivate();
-		Key pubKey1 = keys1.getPublic();
-
-		KeyPair keys2 = RSA.getKeyPairFromKeyStore("client2", "password", "/client-keystore.jks", "password");
-		Key privKey2 = keys2.getPrivate();
-		Key pubKey2 = keys2.getPublic();
-
-		KeyPair keys3 = RSA.getKeyPairFromKeyStore("client3", "password", "/client-keystore.jks", "password");
-		Key privKey3 = keys3.getPrivate();
-		Key pubKey3 = keys3.getPublic();
-
-        Key serverPubKey = RSA.getKeyPairFromKeyStore("server1", "password", "/server-keystore.jks", "password").getPublic();
         String name = "John";
         String serverPassword = "password";
 
-		int resp1 = client1.register(privKey1, pubKey1, serverPubKey, name, serverPassword);
-		int resp2 = client1.register(privKey2, pubKey2, serverPubKey, name, serverPassword);
-		int resp3 = client1.register(privKey3, pubKey3, serverPubKey, name, serverPassword);
+		int resp1 = client1.register(name, serverPassword);
+		int resp2 = client2.register(name, serverPassword);
+		int resp3 = client3.register(name, serverPassword);
 		
 		assertEquals(200, resp1);
 		assertEquals(200, resp2);
@@ -72,18 +52,22 @@ public class RegisterTest extends BaseTest {
 	@Test
 	public void failure1() throws Exception {
 
-		KeyPair keys1 = RSA.getKeyPairFromKeyStore("client1", "password", "/client-keystore.jks", "password");
-		Key privKey1 = keys1.getPrivate();
-
 		KeyPair keys2 = RSA.getKeyPairFromKeyStore("client2", "password", "/client-keystore.jks", "password");
 		Key pubKey2 = keys2.getPublic();
+		client1.setPubKey(pubKey2);
 
-		Key serverPubKey = RSA.getKeyPairFromKeyStore("server1", "password", "/server-keystore.jks", "password").getPublic();
 		String name = "John";
 		String serverPassword = "password";
 
-		int resp1 = client1.register(privKey1, pubKey2, serverPubKey, name, serverPassword);
+		int resp1 = client1.register(name, serverPassword);
 
 		assertEquals(400, resp1);
+	}
+
+	@After
+	public void tearDown() throws IOException {
+		for (ManagedChannel channel : channels) {
+			channel.shutdown();
+		}
 	}
 }

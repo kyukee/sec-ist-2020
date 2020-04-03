@@ -1,20 +1,17 @@
 package pt.ulisboa.tecnico.meic.sec.pas.server.domain;
 
 import java.security.Key;
-import java.util.Random;
 
 public class User {
 
     private AnnouncementBoard personalBoard;
     private String name;
-    private String password;
-    private long _id;
+    private long passwordHash;
 
     public User(Key publicKey, String name, String password) {
-        this._id = publicKey.hashCode();
         this.personalBoard = new AnnouncementBoard();
         this.name = name;
-        this.password = password;
+        this.passwordHash = password.hashCode();
     }
 
     public AnnouncementBoard getPersonalBoard() {
@@ -25,11 +22,8 @@ public class User {
         return this.name;
     }
 
-    public String getPassword() {
-        return this.password;
+    public Long getPasswordHash() {
+        return this.passwordHash;
     }
     
-    public Long getId() {
-        return this._id;
-    }
 }

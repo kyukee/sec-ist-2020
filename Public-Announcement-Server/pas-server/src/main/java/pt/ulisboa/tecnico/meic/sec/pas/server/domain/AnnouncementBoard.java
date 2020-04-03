@@ -1,18 +1,23 @@
 package pt.ulisboa.tecnico.meic.sec.pas.server.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AnnouncementBoard {
 
-    List<Announcement> announcements;
+    private Map<Long, Announcement> announcements;
     
     public AnnouncementBoard() {
-        this.announcements = new ArrayList<>();
+        this.announcements = new ConcurrentHashMap<Long, Announcement>();
     }
 
-    public List<Announcement> getAnnouncements() {
+    public Map<Long, Announcement> getAnnouncements() {
         return this.announcements;
+    }
+
+    public void addAnnouncement(Announcement announcement){
+        long hash = announcement.hashCode();
+        this.announcements.put(hash, announcement);
     }
     
 }

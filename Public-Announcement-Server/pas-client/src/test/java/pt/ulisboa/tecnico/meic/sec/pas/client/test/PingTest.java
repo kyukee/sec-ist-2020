@@ -17,24 +17,13 @@ import pt.ulisboa.tecnico.meic.sec.pas.client.PasClientApp;
 
 public class PingTest extends BaseTest {
 
-  private PasClientApp client1;
-	private ManagedChannel channel1;
+  	private PasClientApp client1;
 
 	@Before
 	public void setup() throws UnknownHostException, IOException {
-      String server;
 
-      // connect client1 to server1
-      client1 = new PasClientApp();
-      server = "server1";
-	    channel1 = PasClientApp.createChannel(hosts.get(server), ports.get(server));
-	    client1.startConnection(channel1);
-
-	}
-
-	@After
-	public void tearDown() throws IOException {
-		channel1.shutdown();
+		// connect client1 to server1
+		client1 = createClient("client1", "server1");
 	}
 
 	@Test
@@ -43,6 +32,13 @@ public class PingTest extends BaseTest {
 	    System.out.println(resp1);
 
 	    assertEquals(resp1, "hello");
+	}
+
+	@After
+	public void tearDown() throws IOException {
+		for (ManagedChannel channel : channels) {
+			channel.shutdown();
+		}
 	}
 
 }

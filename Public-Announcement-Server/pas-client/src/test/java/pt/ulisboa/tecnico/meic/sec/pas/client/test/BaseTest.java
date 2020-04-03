@@ -1,12 +1,20 @@
 package pt.ulisboa.tecnico.meic.sec.pas.client.test;
 
 import java.io.IOException;
+import java.security.Key;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
+import io.grpc.ManagedChannel;
+import pt.ulisboa.tecnico.meic.sec.pas.client.PasClientApp;
+import pt.ulisboa.tecnico.meic.sirs.RSA;
 
 public class BaseTest {
 
@@ -15,6 +23,18 @@ public class BaseTest {
 
 	public static Map<String,String> hosts = new HashMap<String, String>();
 	public static Map<String,Integer> ports = new HashMap<String, Integer>();
+
+	public static List<ManagedChannel> channels = new ArrayList<ManagedChannel>();
+
+	public static PasClientApp createClient(String clientName, String serverName){
+		java.security.KeyPair keys = RSA.getKeyPairFromKeyStore(clientName, "password", "/client-keystore.jks", "password");
+		Key serverPubKey = RSA.getKeyPairFromKeyStore(serverName, "password", "/server-keystore.jks", "password").getPublic();
+		PasClientApp client = new PasClientApp(keys.getPrivate(), keys.getPublic(), serverPubKey);
+		ManagedChannel channel = PasClientApp.createChannel(hosts.get(serverName), ports.get(serverName));
+		channels.add(channel);
+		client.startConnection(channel);
+		return client;
+	}
 
 	@BeforeClass
 	public static void oneTimeSetup() throws Exception {
