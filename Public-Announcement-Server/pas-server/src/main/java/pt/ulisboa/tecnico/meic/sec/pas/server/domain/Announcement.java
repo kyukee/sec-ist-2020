@@ -8,17 +8,17 @@ import pt.ulisboa.tecnico.meic.sirs.DataUtils;
 
 public class Announcement implements Comparator<Announcement> {
 
-    User user;
-    long creationTime; // as an epoch
-    List<Announcement> references;
+    Long creationTime; // as an epoch
+    List<Long> references;
     String message;
     long _id;
+    long _userId;
 
     // cut string to 256 characters
     // String cutString = StringUtils.left(string, 256);
 
-    public Announcement(User user, long creationTime, List<Announcement> references, String message) {
-        this.user = user;
+    public Announcement(Long user, long creationTime, List<Long> references, String message) {
+        this._userId = user;
         this.creationTime = creationTime;
         this.references = references;
         this.message = message;
@@ -27,15 +27,15 @@ public class Announcement implements Comparator<Announcement> {
         this._id = msg ^ creationTime;
     }
 
-    public User getUser() {
-        return this.user;
+    public Long getUser() {
+        return this._userId;
     }
 
     public long getCreationTime() {
         return this.creationTime;
     }
 
-    public List<Announcement> getReferences() {
+    public List<Long> getReferences() {
         return this.references;
     }
 
@@ -43,13 +43,12 @@ public class Announcement implements Comparator<Announcement> {
         return this.message;
     }
 
-    public long get_id() {
+    public long getId() {
         return this._id;
     }
 
     public int compare(Announcement first, Announcement second) {
-        // the more recent one is greater
-        return (int) (first.getCreationTime() - second.getCreationTime());
+        return (int) (first.getId() - second.getId());
     }
 
 }

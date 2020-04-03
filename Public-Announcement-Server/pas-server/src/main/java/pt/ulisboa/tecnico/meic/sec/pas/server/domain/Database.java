@@ -9,14 +9,15 @@ public class Database {
     AnnouncementBoard generalBoard;
     List<User> users = new ArrayList<User>();
 
-    private boolean containsKey(final List<User> list, final Key publicKey) {
-        return list.stream().filter(o -> o.getPublicKey().equals(publicKey)).findFirst().isPresent();
+    private boolean containsKey(final List<User> list, final Long keyHash) {
+        return list.stream().filter(o -> o.getId().equals(keyHash)).findFirst().isPresent();
     }
 
     public int register(Key publicKey, String name, String password){
 
         // check if the received fields are valid
-        if (containsKey(users, publicKey)) {
+        long pubKeyHash = publicKey.hashCode();
+        if (containsKey(users, pubKeyHash)) {
             return 400;
         }
 
@@ -28,7 +29,7 @@ public class Database {
 
 
 
-    // public void post(Key publicKey, String message, List<Announcement> references, long creationTime, String password, byte[] digest, byte[] encryptedAESkey)
+    // public void post(Key publicKey, String message, List<Announcement> references, long creationTime, String password, byte[] signature, byte[] encryptedAESkey)
 
 
 

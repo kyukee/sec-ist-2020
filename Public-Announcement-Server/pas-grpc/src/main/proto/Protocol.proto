@@ -37,7 +37,7 @@ message RegisterMessage {
   }
 
   Data data = 1;
-	bytes digest = 2;
+	bytes signature = 2;
 }
 
 // ********** post() **********
@@ -61,7 +61,7 @@ message PostMessage {
   }
 
   Data data = 1;
-	bytes digest = 2;
+	bytes signature = 2;
 }
 
 // ********** read() **********
@@ -73,7 +73,7 @@ message ReadRequest {
 }
 
 message ReadResponse {
-	int32 status = 1;
+	repeated Announcement posts = 1;
 }
 
 message ReadMessage {
@@ -82,7 +82,7 @@ message ReadMessage {
   }
 
   Data data = 1;
-	bytes digest = 2;
+	bytes signature = 2;
 }
 
 // ********** readGeneral() **********
@@ -93,7 +93,7 @@ message ReadGeneralRequest {
 }
 
 message ReadGeneralResponse {
-	int32 status = 1;
+	repeated Announcement posts = 1;
 }
 
 message ReadGeneralMessage {
@@ -102,8 +102,19 @@ message ReadGeneralMessage {
   }
 
   Data data = 1;
-	bytes digest = 2;
+	bytes signature = 2;
 }
+
+// ********** dto **********
+
+message Announcement {
+  string message = 1;
+  repeated int64 references = 2;
+  int64 epoch = 3;
+  int64 _userId = 4;
+  int64 _id = 5;
+}
+
 
 service PasService {
   rpc ping(PingRequest) returns (PingReply);

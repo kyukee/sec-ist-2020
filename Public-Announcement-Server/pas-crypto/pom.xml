@@ -19,9 +19,6 @@
         <testResource>
             <directory>../pas-client/src/test/resources</directory>
         </testResource>
-        <testResource>
-            <directory>../pas-server/src/test/resources</directory>
-        </testResource>
     </testResources>
   </build>
 

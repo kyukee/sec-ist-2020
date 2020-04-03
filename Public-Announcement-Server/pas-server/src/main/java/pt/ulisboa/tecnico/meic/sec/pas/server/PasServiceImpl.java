@@ -11,9 +11,14 @@ import pt.ulisboa.tecnico.meic.sirs.DataUtils;
 import pt.ulisboa.tecnico.meic.sirs.RSA;
 import pt.ulisboa.tecnico.meic.sec.pas.grpc.PasServiceGrpc.*;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyPair;
-import java.security.MessageDigest;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,11 +36,13 @@ public class PasServiceImpl extends PasServiceImplBase {
     }
 
     private KeyPair getServerKeys() {
+        
+        // TODO cleartext password && what about multiple servers?
         String serverKeystore = "/server-keystore.jks";
-        return RSA.getKeyPairFromKeyStore("server1", serverKeystore, "password", "password");
+        return RSA.getKeyPairFromKeyStore("server1", "password", serverKeystore, "password");
     }
 
-    private boolean messageIsValid(long requestEpoch, byte[] dataBytes, byte[] receivedDigest, Key clientPubKey, int nonce) {
+    private boolean messageIsValid(long requestEpoch, byte[] dataBytes, byte[] receivedSignature, PublicKey clientPubKey, int nonce) {
         
         // check how long ago the message was sent
         int maxDelaySeconds = 120;
@@ -45,10 +52,8 @@ public class PasServiceImpl extends PasServiceImplBase {
             return false;
         }
         
-        // compare received digest to the calculated one
-        byte[] digest = DataUtils.digest(dataBytes);
-        
-        if ( ! MessageDigest.isEqual(digest, receivedDigest)) {
+        // compare received signature to the calculated one
+        if ( ! RSA.verify(dataBytes, clientPubKey, receivedSignature)) {
             return false;
         }    
 
@@ -71,30 +76,30 @@ public class PasServiceImpl extends PasServiceImplBase {
 
     public void register(RegisterRequest request, StreamObserver<RegisterResponse> responseObserver) {
         
+        System.out.println("Received a register request");
+
         int replyStatus = 200;
         
         // these are the fields we received
         byte[] encryptedMessage = request.getEncryptedMessage().toByteArray();
         byte[] encryptedAESKey = request.getEncryptedAESKey().toByteArray();
         byte[] publicKeyBytes = request.getPublicKeyBytes().toByteArray();
-        Key clientPubKey = RSA.toKey(publicKeyBytes);
+        PublicKey clientPubKey = RSA.toPublicKey(publicKeyBytes);
         
         // retrieve the server's private key
-        // TODO cleartext password && what about multiple servers?
         KeyPair keys = getServerKeys();
         Key privKey = keys.getPrivate();
         
         // unencrypt aes key
-        byte[] encryptedAESKey_pass1 = RSA.decrypt(privKey, encryptedAESKey);
-        byte[] encryptedAESKey_pass2 = RSA.decrypt(clientPubKey, encryptedAESKey_pass1);
-        Key aesKey = RSA.toKey(encryptedAESKey_pass2);
+        byte[] unencryptedAESKey = RSA.decrypt(privKey, encryptedAESKey);
+        Key aesKey = AES.toKey(unencryptedAESKey);
         
         // unencrypt message
         byte[] messageBytes = AES.decrypt(aesKey, encryptedMessage);
         RegisterMessage message = (RegisterMessage) DataUtils.bytesToObj(messageBytes);
         
         // get the arguments to perform validity check
-        byte[] receivedDigest = message.getDigest().toByteArray();
+        byte[] receivedSignature = message.getSignature().toByteArray();
 
         RegisterMessage.Data data = message.getData();
         byte[] dataBytes = DataUtils.objToBytes(data);
@@ -104,11 +109,11 @@ public class PasServiceImpl extends PasServiceImplBase {
         int aesKeyHash = aesKey.hashCode();
 
         // if the message is valid, we try to register the new user
-        if (messageIsValid(requestEpoch, dataBytes, receivedDigest, clientPubKey, aesKeyHash)) {
+        if (messageIsValid(requestEpoch, dataBytes, receivedSignature, clientPubKey, aesKeyHash)) {
 
             String clientName = data.getName();
             String clientPassword = data.getPassword();
-            
+
             replyStatus = database.register(clientPubKey, clientName, clientPassword);
         } else {
             replyStatus = 400;

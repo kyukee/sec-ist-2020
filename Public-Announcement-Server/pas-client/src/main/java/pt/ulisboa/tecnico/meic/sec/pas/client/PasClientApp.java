@@ -53,7 +53,7 @@ public class PasClientApp {
 
 	public int register(Key privKey, Key pubKey, Key serverPubKey, String name, String password) throws Exception {
 
-		// RegisterMessage contains data and a digest.
+		// RegisterMessage contains data and a signature.
 		RegisterMessage.Builder builder = RegisterMessage.newBuilder();
 
 		// fill the data field of RegisterMessage
@@ -64,13 +64,13 @@ public class PasClientApp {
 			.setEpoch(epoch)
 			.build();
 
-		// create a digest of the data and insert into RegisterMessage
+		// create a signature of the data and insert into RegisterMessage
 		byte[] dataBytes = DataUtils.objToBytes(data);
-		byte[] digest = DataUtils.digest(dataBytes);
+		byte[] signature = RSA.sign(dataBytes, privKey);
 
 		RegisterMessage registerMessage = builder
 			.setData(data)
-			.setDigest(ByteString.copyFrom(digest))
+			.setSignature(ByteString.copyFrom(signature))
 			.build();
 
 		// RegisterMessage can now be encrypted with AES
@@ -78,17 +78,15 @@ public class PasClientApp {
 		byte[] messageBytes = DataUtils.objToBytes(registerMessage);
 		byte[] encryptedMessageBytes = AES.encrypt(aesKey, messageBytes);
 
-		// the AES key is encrypted with RSA keys
-		// first with client's private key and then the server's public key
+		// the AES key is encrypted with the clients private key
 		byte[] aesKeyBytes = AES.toBytes(aesKey);
-		byte[] aesKeyBytes_rsaPass1 = RSA.encrypt(privKey, aesKeyBytes);
-		byte[] aesKeyBytes_rsaPass2 = RSA.encrypt(serverPubKey, aesKeyBytes_rsaPass1);
+		byte[] aesKeyBytes_rsa = RSA.encrypt(serverPubKey, aesKeyBytes);
 
 		// the final message contains the encrypted RegisterMessage, encrypted AES key and user public key
 		byte[] encoded = pubKey.getEncoded();
 		RegisterRequest registerRequest = RegisterRequest.newBuilder()
 			.setEncryptedMessage(ByteString.copyFrom(encryptedMessageBytes))
-			.setEncryptedAESKey(ByteString.copyFrom(aesKeyBytes_rsaPass2))
+			.setEncryptedAESKey(ByteString.copyFrom(aesKeyBytes_rsa))
 			.setPublicKeyBytes(ByteString.copyFrom(encoded))
 			.build();
 

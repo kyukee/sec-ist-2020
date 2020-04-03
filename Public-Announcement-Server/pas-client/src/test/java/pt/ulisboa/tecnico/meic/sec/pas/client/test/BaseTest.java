@@ -35,13 +35,13 @@ public class BaseTest {
 
 		server = "server1";
 		host = testProps.getProperty(server + ".host");
-    port = Integer.parseInt(testProps.getProperty(server + ".port"));
+    	port = Integer.parseInt(testProps.getProperty(server + ".port"));
 		hosts.put(server, host);
 		ports.put(server, port);
 
 		server = "server2";
 		host = testProps.getProperty(server + ".host");
-    port = Integer.parseInt(testProps.getProperty(server + ".port"));
+    	port = Integer.parseInt(testProps.getProperty(server + ".port"));
 		hosts.put(server, host);
 		ports.put(server, port);
 

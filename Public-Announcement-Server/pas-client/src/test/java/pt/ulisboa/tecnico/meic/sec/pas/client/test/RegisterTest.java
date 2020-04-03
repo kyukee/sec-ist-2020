@@ -44,24 +44,46 @@ public class RegisterTest extends BaseTest {
 	@Test
 	public void correctArgumentsCorrectResult() throws Exception {
 
-		// TODO keystore doesnt work
+		KeyPair keys1 = RSA.getKeyPairFromKeyStore("client1", "password", "/client-keystore.jks", "password");
+        Key privKey1 = keys1.getPrivate();
+		Key pubKey1 = keys1.getPublic();
 
-		KeyPair keys = RSA.getKeyPairFromKeyStore("client1", "/client-keystore.jks", "password", "password");
-        Key privKey = keys.getPrivate();
-		Key pubKey = keys.getPublic();
+		KeyPair keys2 = RSA.getKeyPairFromKeyStore("client2", "password", "/client-keystore.jks", "password");
+		Key privKey2 = keys2.getPrivate();
+		Key pubKey2 = keys2.getPublic();
 
-		System.out.println(DataUtils.bytesToHex(privKey.getEncoded()));
-		System.out.println(DataUtils.bytesToHex(pubKey.getEncoded()));
+		KeyPair keys3 = RSA.getKeyPairFromKeyStore("client3", "password", "/client-keystore.jks", "password");
+		Key privKey3 = keys3.getPrivate();
+		Key pubKey3 = keys3.getPublic();
 
+        Key serverPubKey = RSA.getKeyPairFromKeyStore("server1", "password", "/server-keystore.jks", "password").getPublic();
+        String name = "John";
+        String serverPassword = "password";
+
+		int resp1 = client1.register(privKey1, pubKey1, serverPubKey, name, serverPassword);
+		int resp2 = client1.register(privKey2, pubKey2, serverPubKey, name, serverPassword);
+		int resp3 = client1.register(privKey3, pubKey3, serverPubKey, name, serverPassword);
 		
-        // Key serverPubKey = RSA.getKeyPairFromKeyStore("server1", "/server-keystore.jks", "password", "password").getPublic();
-        // String name = "John";
-        // String serverPassword = "password";
-
-	    // int resp1 = client1.register(privKey, pubKey, serverPubKey, name, serverPassword);
-	    // System.out.println(resp1);
-
-	    // assertEquals(resp1, 200);
+		assertEquals(200, resp1);
+		assertEquals(200, resp2);
+		assertEquals(200, resp3);
 	}
 
+	@Test
+	public void failure1() throws Exception {
+
+		KeyPair keys1 = RSA.getKeyPairFromKeyStore("client1", "password", "/client-keystore.jks", "password");
+		Key privKey1 = keys1.getPrivate();
+
+		KeyPair keys2 = RSA.getKeyPairFromKeyStore("client2", "password", "/client-keystore.jks", "password");
+		Key pubKey2 = keys2.getPublic();
+
+		Key serverPubKey = RSA.getKeyPairFromKeyStore("server1", "password", "/server-keystore.jks", "password").getPublic();
+		String name = "John";
+		String serverPassword = "password";
+
+		int resp1 = client1.register(privKey1, pubKey2, serverPubKey, name, serverPassword);
+
+		assertEquals(400, resp1);
+	}
 }
