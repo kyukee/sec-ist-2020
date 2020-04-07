@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.meic.sec.pas.client;
 
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.protobuf.ByteString;
@@ -147,7 +148,12 @@ public class PasClientApp {
 		// cut message to length
  		if (message != null && message.length() > 255) {
 			message = message.substring(0, 255);
-		}
+        }
+
+        // check if references field is null
+        if (references == null) {
+            references = new ArrayList<Long>();
+        }
 
 		PostMessage.Data data = PostMessage.Data.newBuilder()
 			.setMessage(message)
@@ -230,5 +236,5 @@ public class PasClientApp {
 		List<Announcement> list = readResponse.getPostsList();
 		return list;
 	}
-	
+
 }

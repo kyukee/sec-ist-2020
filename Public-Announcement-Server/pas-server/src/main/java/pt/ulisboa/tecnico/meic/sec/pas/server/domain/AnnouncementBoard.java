@@ -6,12 +6,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AnnouncementBoard {
 
     private Map<Long, Announcement> announcements;
-    
+
     public AnnouncementBoard() {
         this.announcements = new ConcurrentHashMap<Long, Announcement>();
     }
 
-    public Map<Long, Announcement> getAnnouncements() {
+    public Map<Long, Announcement> getAnnouncementMap() {
         return this.announcements;
     }
 
@@ -19,5 +19,5 @@ public class AnnouncementBoard {
         long hash = announcement.hashCode();
         this.announcements.put(hash, announcement);
     }
-    
+
 }

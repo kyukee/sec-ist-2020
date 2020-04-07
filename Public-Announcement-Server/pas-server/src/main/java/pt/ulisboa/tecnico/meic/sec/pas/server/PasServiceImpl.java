@@ -19,13 +19,8 @@ import pt.ulisboa.tecnico.meic.sirs.RSA;
 import pt.ulisboa.tecnico.meic.sec.pas.grpc.Protocol;
 import pt.ulisboa.tecnico.meic.sec.pas.grpc.PasServiceGrpc.*;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,13 +41,13 @@ public class PasServiceImpl extends PasServiceImplBase {
     }
 
     private KeyPair getServerKeys() {
-        
+
         // TODO cleartext password && what about multiple servers?
         return RSA.getKeyPairFromKeyStore("server1", "password", "/server-keystore.jks", "password");
     }
 
     private boolean messageIsValid(long requestEpoch, byte[] dataBytes, byte[] receivedSignature, PublicKey clientPubKey, int nonce) {
-        
+
         // check how long ago the message was sent
         int maxDelaySeconds = 120;
         long currentEpoch = System.currentTimeMillis() / 1000;
@@ -60,11 +55,11 @@ public class PasServiceImpl extends PasServiceImplBase {
         if (currentEpoch - requestEpoch > maxDelaySeconds) {
             return false;
         }
-        
+
         // compare received signature to the calculated one
         if ( ! RSA.verify(dataBytes, clientPubKey, receivedSignature)) {
             return false;
-        }    
+        }
 
         // check if the aes key has been used before (the aes hash functions as a nonce)
         int lastNonce = usedNonces.getOrDefault(clientPubKey, 0);
@@ -77,7 +72,7 @@ public class PasServiceImpl extends PasServiceImplBase {
     }
 
     private Protocol.Announcement convertToDto(Announcement announcement) {
-        
+
         Protocol.Announcement dto = Protocol.Announcement.newBuilder()
 			.setMessage(announcement.getMessage())
 			.addAllReferences(announcement.getReferences())
@@ -97,29 +92,29 @@ public class PasServiceImpl extends PasServiceImplBase {
     }
 
     public void register(RegisterRequest request, StreamObserver<RegisterResponse> responseObserver) {
-        
+
         System.out.println("Received a register request");
 
         int replyStatus = 200;
-        
+
         // these are the fields we received
         byte[] encryptedMessage = request.getEncryptedMessage().toByteArray();
         byte[] encryptedAESKey = request.getEncryptedAESKey().toByteArray();
         byte[] publicKeyBytes = request.getPublicKeyBytes().toByteArray();
         PublicKey clientPubKey = RSA.toPublicKey(publicKeyBytes);
-        
+
         // retrieve the server's private key
         KeyPair keys = getServerKeys();
         Key privKey = keys.getPrivate();
-        
+
         // unencrypt aes key
         byte[] unencryptedAESKey = RSA.decrypt(privKey, encryptedAESKey);
         Key aesKey = AES.toKey(unencryptedAESKey);
-        
+
         // unencrypt message
         byte[] messageBytes = AES.decrypt(aesKey, encryptedMessage);
         RegisterMessage message = (RegisterMessage) DataUtils.bytesToObj(messageBytes);
-        
+
         // get the arguments to perform validity check
         byte[] receivedSignature = message.getSignature().toByteArray();
 
@@ -127,7 +122,7 @@ public class PasServiceImpl extends PasServiceImplBase {
         byte[] dataBytes = DataUtils.objToBytes(data);
 
         long requestEpoch = data.getEpoch();
-                
+
         int aesKeyHash = aesKey.hashCode();
 
         // if the message is valid, we try to register the new user
@@ -140,7 +135,7 @@ public class PasServiceImpl extends PasServiceImplBase {
         } else {
             replyStatus = 400;
         }
-        
+
         RegisterResponse response = RegisterResponse.newBuilder()
           .setStatus(replyStatus)
           .build();
@@ -244,7 +239,7 @@ public class PasServiceImpl extends PasServiceImplBase {
             for (Announcement post : database.read(announcementKey, number)) {
                 posts.add(convertToDto(post));
             }
-            
+
             reply = posts;
 
         } else {

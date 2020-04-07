@@ -4,6 +4,7 @@ import java.security.Key;
 import java.security.PublicKey;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class Database {
 
 
     public int post(Key publicKey, String message, List<Long> references, long receivedEpoch, String password) {
-        
+
         // check user exists
         long pubKeyHash = publicKey.hashCode();
         if (! users.containsKey(pubKeyHash)) {
@@ -39,7 +40,7 @@ public class Database {
         // check password is correct
         User user = users.get(pubKeyHash);
         long passHash = password.hashCode();
-        if (user.getPasswordHash().equals(passHash)){
+        if (! user.getPasswordHash().equals(passHash)){
             return 400;
         }
 
@@ -58,13 +59,13 @@ public class Database {
         }
 
         User user = users.get(pubKeyHash);
-        List<Announcement> list = (List<Announcement>) user.getPersonalBoard().getAnnouncements().values();
+        List<Announcement> list = new ArrayList<Announcement>(user.getPersonalBoard().getAnnouncementMap().values());
 
         List<Announcement> sortedList = list.stream()
             .sorted(Comparator.comparing(Announcement::getCreationTime)).
             collect(Collectors.toList());
 
-        if ((number == 0) || (number >= list.size())) {
+        if ((number == 0)) {
             return sortedList;
         }
 

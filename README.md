@@ -16,6 +16,8 @@ Highly Dependable Systems 2019-2020, 2nd semester project
 
 ## Running tests
 
+Note: A server must be running when executing client tests
+
 - how to run servers
 
         cd pas-server
